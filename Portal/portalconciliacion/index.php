@@ -28,6 +28,7 @@ $tipoiniciada=$_SESSION["User_Type"] ;
         var campo1 = "";
         var campo2 = "";
         var tipo = "";
+        var empresa = "";
 
         $("#form").attr("style","display: none");
         $('#colegio').change(function()
@@ -78,9 +79,10 @@ $tipoiniciada=$_SESSION["User_Type"] ;
         $("#ingresar").click(function(){
            campo1=$("#campo1").val();
            campo2=$("#campo2").val();
-           tipo = $('input:radio[name=tipo]:checked').val();
+           tipo = $('input:radio[name=tipo]:checked').val();           
+           empresa = $("#colegio option:selected").val();
 
-           $.post('conexion/sesion.php',{Campo1: campo1,Campo2: campo2, Tipo: tipo}, function(data)
+           $.post('conexion/sesion.php',{Campo1: campo1,Campo2: campo2, Tipo: tipo, Empresa:empresa}, function(data)
            {
               if(data == "administrador")
               {
@@ -88,11 +90,11 @@ $tipoiniciada=$_SESSION["User_Type"] ;
               }
               else if(data == "alumno")
               {
-                location.replace("http://stackoverflow.com");
+                location.replace("inicio.php");
               }
               else if(data == "docente")
               {
-                location.replace("http://stackoverflow.com");
+                location.replace("inicio.php");
               }
               else
               {
@@ -106,7 +108,7 @@ $tipoiniciada=$_SESSION["User_Type"] ;
     </script>
     <div class="login">
       <div class="heading">
-        <center><img src="images/CalasanzTransparente.png" width="50%"></center>
+        <center><a href="index.php"><img src="images/CalasanzTransparente.png" width="50%" ></a></center>
         <h2></h2>
           <div id="seleccionar_colegio">
             <select name="colegio" id="colegio">

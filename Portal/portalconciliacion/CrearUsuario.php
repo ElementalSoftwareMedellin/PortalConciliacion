@@ -1,6 +1,5 @@
 <?php
 
-include 'conexion/conection.php';
 session_start();
 //////validar que sea el tipo de usuario con permisos
 if ($_SESSION["User_Type"] =='0') // validacion tipo de usuario
@@ -11,6 +10,7 @@ else
 	die('No tiene permisos para acceder a este lugar');
 }
 ////////////////////////////////////////////////////
+
 if ($_SESSION["User_Type"] == 0) 
 {
 		Include "cuerpoadministrador.php";
@@ -29,7 +29,7 @@ else if ($_SESSION["User_Type"] == "alumno")
 	<!-- Post -->
 		<article class="box post post-excerpt">
 			<header>
-				<h2><a href="#">GESTIÓN DE ALUMNOS</a></h2>
+				<h2><a href="#">GESTIÓN DE USUARIOS</a></h2>
 				<p></p>
 			</header>
 			<p>
@@ -45,22 +45,11 @@ else if ($_SESSION["User_Type"] == "alumno")
 		<link href="scripts/jtable/themes/lightcolor/blue/jtable.css" rel="stylesheet" type="text/css" />
 		<script src="scripts/jtable/jquery.jtableElemental.js" type="text/javascript"></script>
 		<script type="text/javascript">
-		<?php
-			    $sql= "SELECT id_empresa,nombre_empresa FROM empresa;";
-			    $result = mysql_query($sql) or ("error al consultar empresa.");
-			    $empresas="";
-			    while($row = mysql_fetch_array($result))
-			    {
-			      $empresas= $empresas."'".$row['id_empresa']."':'".$row['nombre_empresa']."',";
-			    }
-			    $empresas= substr($empresas, 0 ,strlen($empresas)-1);
-			    $empresas = "{".$empresas."}";
-	    ?>
 		$(document).ready(function () {
-				var jsonempresas="";
-				$(".title").text("GESTION DE ALUMNOS");
+				$(".title").text("GESTION DE USUARIO");
+		    //Prepare jTable
 			    $('#PeopleTableContainer').jtable({
-				title: 'Alumnos',
+				title: 'Usuarios',
 				paging: true,
 				pageSize: 10,
 				sorting: true,
@@ -70,10 +59,10 @@ else if ($_SESSION["User_Type"] == "alumno")
                 selectingCheckboxes: false,
                 selectOnRowClick: false,
 				actions: {
-					listAction: 'listarCliente.php?action=list&jtSorting=id_cliente%20DESC&jtStartIndex=0&jtPageSize=20',
-					createAction: 'listarCliente.php?action=create',
-					updateAction: 'listarCliente.php?action=update',
-					deleteAction: 'listarCliente.php?action=delete',
+					listAction: 'listarUsuario.php?action=list&jtSorting=id_usuario%20DESC&jtStartIndex=0&jtPageSize=20',
+					createAction: 'listarUsuario.php?action=create',
+					updateAction: 'listarUsuario.php?action=update',
+					deleteAction: 'listarUsuario.php?action=delete',
 					slistAction: 'null'
 				},
 				fields: {
@@ -83,40 +72,36 @@ else if ($_SESSION["User_Type"] == "alumno")
 						edit: false,
 						list: false
 					},
-					Identificacion: {
-						title: 'Identificacion',
-						width: '10%',
-						edit: true
+					Nit: {
+						title: 'Nit',
+						edit: false,
+						width: '20%'
 					},
 					Nombre: {
 						title: 'Nombre',
 						width: '20%'
 					},
-					Apellido: {
-						title: 'Apellido',
+					Contrasena: {
+						title: 'Contrasena',
+						width: '33%',
+						edit: true,
+						list: false
+					},
+					Correo: {
+						title: 'Correo:',
 						width: '20%'
 					},
-					Codigo: {
-						title: 'Matricudla',
-						width: '10%'
-					},
-					Modulo: {
-						title: 'Grupo',
-						width: '10%',
-						edit: true
-					},
-
-					Empresa: {
-						title: 'Colegio',
+					Tipo: {
+						title: 'Tipo',
 						width: '20%',
-						options: <?php echo $empresas; ?>,
-						edit: true
+						edit: false,
+						options: {"0":"ADMINISTRADOR","1":"DOCENTE"}
 					},
 					Estado: {
-						title: 'Estado',
-						width: '10%',
-						options: {0:"activo",1:"inactivo"},
-						edit: true
+						title: 'Tipo',
+						width: '20%',
+						edit: false,
+						options: {"0":"ACTIVO","1":"INACTIVO"}
 					}
 				}
 			});
@@ -129,7 +114,7 @@ else if ($_SESSION["User_Type"] == "alumno")
 			{
 				$('#PeopleTableContainer').jtable('reload', {
                 actions: {
-                			slistAction: 'listarCliente.php?action=list&jtSorting=id_cliente%20DESC&jtStartIndex=0&jtPageSize=10&buscar=' + $(this).val(),
+                			slistAction: 'listarUsuario.php?action=list&jtSorting=id_usuario%20DESC&jtStartIndex=0&jtPageSize=10&buscar=' + $(this).val(),
                 		}
             	});
 			});

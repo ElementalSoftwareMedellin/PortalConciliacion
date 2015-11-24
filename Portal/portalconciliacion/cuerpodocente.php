@@ -3,7 +3,7 @@ if (!isset($_SESSION["User_Active"] ) && !isset($_SESSION["User_Name"] )) //si n
 {
 	header("Location: index.php?error=No ha iniciado sesion");
 }
-if ($_SESSION["User_Type"] =='1' || $_SESSION["User_Type"] =='0' || $_SESSION["User_Type"] =='2') // validacion tipo de usuario
+if ($_SESSION["User_Type"] =='0' || $_SESSION["User_Type"] =='1') // validacion tipo de usuario
 {} 
 else
 {
@@ -46,10 +46,12 @@ else
 			<script src="js/main.js"></script>
 		<!-- Sidebar -->
 			<div id="sidebar">
-
+				<section>
+					<?php echo "<b>DOCENTE</b><br> ID: ".$_SESSION["User_Active"]." <br>USUARIO: ".$_SESSION["User_Name"]."<br><b><a href='logout.php'>SALIR</a></b>";?>
+				</section>
 				<!-- Logo -->
 				<nav>
-					<img src="Calasanz.png" style="width:150">
+					<img src="images/Calasanz.png" style="width:150">
 				</nav>
 				<!-- Nav -->
 					<nav>
@@ -80,12 +82,6 @@ else
 								<ul class="submenu">
 									<li><a href="generar.php">GENERAR</a></li>
 									<li><a href="subir.php">SUBIR</a></li>
-								</ul>
-							</li>
-							<li><div class="link"><i class="fa fa-user"></i>PERSONAL<i class="fa fa-chevron-down"></i></div>
-								<ul class="submenu">
-									<li><a href="CrearAlumnos.php">ALUMNOS</a></li>
-									<li><a href="CrearUsuarios.php">USUARIOS</a></li>
 								</ul>
 							</li>
 						</ul>

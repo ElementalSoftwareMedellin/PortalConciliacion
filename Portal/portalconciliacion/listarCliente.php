@@ -83,7 +83,6 @@ include 'conexion/conection.php';
 	{
 		
 
-
 		$Identificacion=str_replace("'", "", $_POST["Identificacion"]);
 		$Nombre=str_replace("'", "",$_POST["Nombre"] );
 		$Apellido=str_replace("'", "", $_POST["Apellido"]);
@@ -92,35 +91,47 @@ include 'conexion/conection.php';
 		$Estado=str_replace("'", "", $_POST["Estado"]);
 		$Empresa=str_replace("'", "", $_POST["Empresa"]);
 
-		$result = mysql_query("SELECT count(id_cliente) numero FROM cliente c join empresa e on (c.id_empresa = e.id_empresa) WHERE identificacion_cliente = '" . $_POST["Nit"] . "';");
+		$result = mysql_query("SELECT count(id_cliente) numero FROM cliente WHERE identificacion_cliente = '$Identificacion';");
 		$row = mysql_fetch_array($result);
 		$numero = $row['numero'];//Numero para saber si hay mas en la base de datos con ese NIT
 
+		$result = mysql_query("SELECT count(id_cliente) numero2 FROM cliente c join empresa e on (c.id_empresa = e.id_empresa) WHERE e.id_empresa = '$Empresa' AND c.codigo_cliente = '$Codigo';");
+		$row = mysql_fetch_array($result);
+		$numero2 = $row['numero2'];//Numero para saber si hay mas en la base de datos con ese NIT
+
+		
 		if($numero >= 1)
 		{
 				$jTableResult['Result'] = "ERROR";
-				$jTableResult['Message'] = "Ya existe un usuario con este Nit.";
+				$jTableResult['Message'] = "Ya existe un Alumno con esta Identificiacion.";
 				print json_encode($jTableResult);
 				die();
 		}
-		else if(strlen($nombre) >= 100 || strlen($nombre) <= 10)
+		else if($numero2 >= 1)
+		{
+				$jTableResult['Result'] = "ERROR";
+				$jTableResult['Message'] = "Ya existe un Alumno con esta matricula en este colegio.";
+				print json_encode($jTableResult);
+				die();
+		}
+		else if(strlen($Nombre) >= 100 || strlen($Nombre) <= 10)
 		{
 				$jTableResult['Result'] = "ERROR";
 				$jTableResult['Message'] = "El Nombre debe contener contener entre 10 y 80 caracteres";
 				print json_encode($jTableResult);
 				die();
 		}
-		else if (!is_numeric($nit) || strlen($nit) >= 15 || strlen($nit) <= 5)
+		else if (!is_numeric($Identificacion) || strlen($Identificacion) >= 15 || strlen($Identificacion) <= 5)
 		{
 				$jTableResult['Result'] = "ERROR";
-				$jTableResult['Message'] = "El Nit debe ser numero y Mayor a 5 caracteres y menor a 15.";
+				$jTableResult['Message'] = "La Identificacion debe ser numero y Mayor a 5 caracteres y menor a 15.";
 				print json_encode($jTableResult);
 				die();
 		}
-		else if(strlen($contrasena) >= 100 || strlen($contrasena) <= 4)
+		else if (!is_numeric($Codigo) || strlen($Codigo) >= 15 || strlen($Codigo) <= 5)
 		{
 				$jTableResult['Result'] = "ERROR";
-				$jTableResult['Message'] = "La contraseña debe contener contener entre 5 y 80 caracteres";
+				$jTableResult['Message'] = "La Matricula debeser numero y Mayor a 5 caracteres y menor a 15.";
 				print json_encode($jTableResult);
 				die();
 		}
@@ -165,34 +176,6 @@ include 'conexion/conection.php';
 	{
 
 
-		/* ---------VALIDACION DE LOS OTROS CAMPOS -----
-		if(seweeetrlen($nombre) >= 100 || strlen($nombre) <= 10)
-		{
-				$jTableResult['Result'] = "ERROR";
-				$jTableResult['Message'] = "El Nombre debe de contener menos de 100 caracteres y mas de 10";
-				print json_encode($jTableResult);
-				die();
-		}
-		else if (!is_numeric($nit) || strlen($nit) >= 15 || strlen($nit) <= 5)
-		{
-				$jTableResult['Result'] = "ERROR";
-				$jTableResult['Message'] = "El Nit debe ser numero y Mayor a 5 caracteres y menor a 15.";
-				print json_encode($jTableResult);
-				die();
-		}
-		else if(strlen($contrasena) >= 100 || strlen($contrasena) <= 6)
-		{
-				$jTableResult['Result'] = "ERROR";
-				$jTableResult['Message'] = "La contraseña debe de contener menos de 100 caracteres y mas de 5";
-				print json_encode($jTableResult);
-				die();
-		}
-		else
-		{
-				
-		}
-		/* ----------------------------------------*/
-
 		$id = str_replace("'", "",$_POST["Id"] );
 		$Identificacion=str_replace("'", "", $_POST["Identificacion"]);
 		$Nombre=str_replace("'", "",$_POST["Nombre"] );
@@ -201,6 +184,66 @@ include 'conexion/conection.php';
 		$Modulo=str_replace("'", "", $_POST["Modulo"]);
 		$Estado=str_replace("'", "", $_POST["Estado"]);
 		$Empresa=str_replace("'", "", $_POST["Empresa"]);
+
+		$result = mysql_query("SELECT Identificacion_cliente,codigo_cliente,id_empresa FROM cliente WHERE id_cliente = '$id';");
+		$row = mysql_fetch_array($result);
+		$BDidentificacion = $row['Identificacion_cliente'];
+		$BDcodigo = $row['codigo_cliente'];
+		$BDempresa = $row['id_empresa'];
+
+		if ($BDidentificacion != $Identificacion)
+		{
+			$result = mysql_query("SELECT count(id_cliente) numero FROM cliente WHERE identificacion_cliente = '$Identificacion';");
+			$row = mysql_fetch_array($result);
+			$numero = $row['numero'];//Numero para saber si hay mas en la base de datos con ese NIT
+			if($numero >= 1)
+			{
+					$jTableResult['Result'] = "ERROR";
+					$jTableResult['Message'] = "Ya existe un Alumno con esta Identificiacion.";
+					print json_encode($jTableResult);
+					die();
+			}
+		}
+		if ($BDcodigo != $Codigo || $BDempresa != $Empresa) 
+		{
+			$result = mysql_query("SELECT count(id_cliente) numero2 FROM cliente c join empresa e on (c.id_empresa = e.id_empresa) WHERE e.id_empresa = '$Empresa' AND c.codigo_cliente = '$Codigo';");
+			$row = mysql_fetch_array($result);
+			$numero2 = $row['numero2'];//
+			if($numero2 >= 1)
+			{
+					$jTableResult['Result'] = "ERROR";
+					$jTableResult['Message'] = "Ya existe un Alumno con esta matricula en este colegio.";
+					print json_encode($jTableResult);
+					die();
+			}
+		}
+		
+		
+		if(strlen($Nombre) >= 100 || strlen($Nombre) <= 10)
+		{
+				$jTableResult['Result'] = "ERROR";
+				$jTableResult['Message'] = "El Nombre debe contener contener entre 10 y 80 caracteres";
+				print json_encode($jTableResult);
+				die();
+		}
+		else if (!is_numeric($Identificacion) || strlen($Identificacion) >= 15 || strlen($Identificacion) <= 5)
+		{
+				$jTableResult['Result'] = "ERROR";
+				$jTableResult['Message'] = "La Identificacion debe ser numero y Mayor a 5 caracteres y menor a 15.";
+				print json_encode($jTableResult);
+				die();
+		}
+		else if (!is_numeric($Codigo) || strlen($Codigo) >= 15 || strlen($Codigo) <= 5)
+		{
+				$jTableResult['Result'] = "ERROR";
+				$jTableResult['Message'] = "La Matricula debeser numero y Mayor a 5 caracteres y menor a 15.";
+				print json_encode($jTableResult);
+				die();
+		}
+		else
+		{
+				
+		}
 
 
 		$sql="UPDATE cliente
